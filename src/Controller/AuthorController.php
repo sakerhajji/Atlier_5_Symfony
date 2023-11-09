@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Author;
 use App\Form\AuthorType;
 use App\Repository\AuthorRepository;
+use App\Repository\BookRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,16 +134,14 @@ class AuthorController extends AbstractController
     }
 
     #[Route('/author/delete/{id}', name: 'author_delete')]
-    public function deleteAuthor($id, ManagerRegistry $manager, AuthorRepository $authorepository): Response
+    public function deleteAuthor($id, ManagerRegistry $manager, AuthorRepository $authorepository , BookRepository $book): Response
     {
         $em = $manager->getManager();
         $author = $authorepository->find($id);
-        if ($author->getNb_books() == 0) {
+        //$book->deleteBookByIdAuthor($id) ;
             $em->remove($author);
             $em->flush();
-        } else {
-            return  $this->render('author/errorDelete.html.twig');
-        }
+        
         return $this->redirectToRoute('list_authorDB');
     }
 
@@ -150,9 +149,11 @@ class AuthorController extends AbstractController
     #[Route('/author/list/OrderByEmail', name: 'app_author_list_ordered', methods: ['GET'])]
     public function listAuthorByEmail(AuthorRepository $authorRepository): Response
     {
-        return $this->render('author/orderedList.html.twig', [
+        dd($authorRepository->showAllAuthorsOrderByEmailDql()) ; 
+        return new Response("hello" ) ; 
+       /* return $this->render('author/orderedList.html.twig', [
             'authors' => $authorRepository->showAllAuthorsOrderByEmail(),
-        ]);
+        ]);*/
     }
 
     //DQL: Question 3
@@ -171,7 +172,9 @@ class AuthorController extends AbstractController
     #[Route('/author/DeleteDQL', name: 'author_DeleteDQL')]
     function DeleteDQL(AuthorRepository $repo)
     {
+        
         $repo->DeleteAuthor();
         return $this->redirectToRoute('list_authorDB');
     }
+    
 }

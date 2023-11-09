@@ -53,18 +53,38 @@ public function showAllAuthorsOrderByEmail()
         return $this->createQueryBuilder('a')
             ->orderBy('a.email','DESC')
             ->getQuery()
-            ->getResult()
+            //->getDQL() 
+           ->getResult()
         ;
     }
-
+public function showAllAuthorsOrderByEmailDql ()
+{
+    $em=$this->getEntityManager();
+    return $em->createQuery(
+        'SELECT a FROM App\Entity\Author a ORDER BY a.email DESC' 
+    )->getResult() ; 
+}
+public function SearchAuthor($min,$max) 
+{
+    return $this->createQueryBuilder('a')
+    ->select('a')
+    ->where('a.nb_book BETWEEN :min AND :maw')
+    ->setParameter('min',$min) 
+    ->setParameter('maw',$max) 
+    ->getQuery()
+    ->getResult() ; 
+}
 //DQL Question 3
 public function SearchAuthorDQL($min,$max){
     $em=$this->getEntityManager();
     return $em->createQuery(
         'select a from App\Entity\Author a WHERE 
-        a.nb_books BETWEEN ?1 AND ?2')
-        ->setParameter(1,$min)
-        ->setParameter(2,$max)->getResult();
+        a.nb_books BETWEEN :min AND :max')
+        ->setParameter("min",$min)
+        ->setParameter("max",$max)
+        ->getResult(); 
+       
+        ;
 }
 
 //DQL Question 4
@@ -73,6 +93,16 @@ public function DeleteAuthor(){
     return $em->createQuery(
         'DELETE App\Entity\Author a WHERE a.nb_books = 0')
     ->getResult();
+}
+public function  DeleteAuthorquery ()
+{
+    return $this->createQueryBuilder("App\Entity\Author",'a')
+    ->delete()
+    ->where('a.nb_books = 0')
+    ->getQuery()
+    ->getResult()
+    ;
+
 }
 
 

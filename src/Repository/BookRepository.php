@@ -94,7 +94,7 @@ class BookRepository extends ServiceEntityRepository
             ->where('b.category LIKE ?2')
             ->setParameter(2, $c)
             ->getQuery()
-            ->getResult();
+            ->getDQL();
     }
 
     // DQL
@@ -114,6 +114,9 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter(1, '2014-01-01')
             ->setParameter(2, '2018-01-01')->getResult();
     }
+    
+   
+
     function UpdateQB()
     {
         return $this->createQueryBuilder('b')
